@@ -1,0 +1,22 @@
+package com.mindspace.service;
+import com.mindspace.model.ChatMessage.IntentCategory;
+import org.springframework.stereotype.Service;
+import java.util.*;
+@Service
+public class ResponseGeneratorService {
+    public record BotResponse(String text, List<String> steps) {}
+    private static final Map<IntentCategory, BotResponse> RESPONSES = new EnumMap<>(IntentCategory.class);
+    static {
+        RESPONSES.put(IntentCategory.ANXIETY, new BotResponse("I hear you — exam pressure and anxiety can feel really overwhelming. You are not alone. Let us try a grounding technique:", Arrays.asList("Take a slow breath in for 4 counts, hold for 4, then exhale for 6. Repeat 3 times.","Name 5 things you can see around you right now.","Place both feet flat on the floor. Feel the ground beneath you.","Remind yourself: this feeling is temporary, and you have handled hard things before.","Write down your top 3 priorities for today — just 3.")));
+        RESPONSES.put(IntentCategory.BREATHING, new BotResponse("Let us do a guided breathing exercise together. Find a comfortable position and follow these steps:", Arrays.asList("Close your eyes gently or soften your gaze downward.","Breathe IN slowly through your nose for 4 seconds.","Hold your breath gently for 4 seconds.","Breathe OUT slowly through your mouth for 6 seconds.","Pause for 2 seconds. Repeat this cycle 5 times.","Notice how your body feels now compared to when you started.")));
+        RESPONSES.put(IntentCategory.OVERWHELMED, new BotResponse("Feeling burned out is really hard. It takes courage to acknowledge it. Let us slow things down together:", Arrays.asList("Put down any tasks for the next 5 minutes. You have permission to pause.","Breathe in for 4 counts, breathe out for 6. Do this 3 times slowly.","Write down just ONE small thing you can do today.","Drink a glass of water and step away from screens for 5 minutes.","Remember: one thing at a time.")));
+        RESPONSES.put(IntentCategory.SLEEP, new BotResponse("Sleep struggles are very common among students. Here is a simple wind-down routine:", Arrays.asList("At least 30 minutes before bed, dim your screen brightness or put devices away.","Try a body scan: starting at your feet, gently tense and release each muscle group upward.","Keep your room cool and dark. A consistent bedtime trains your body's sleep clock.","If thoughts race, write them in a notebook to park worries for tomorrow.","Try listening to calm music or a sleep meditation to ease into sleep.")));
+        RESPONSES.put(IntentCategory.COUNSELOR, new BotResponse("Reaching out for professional support is a really important and brave step. Here are the campus resources available to you:", Collections.emptyList()));
+        RESPONSES.put(IntentCategory.SAD, new BotResponse("I am sorry you are feeling low right now. Those feelings are valid. Even tiny acts of self-care can help:", Arrays.asList("Drink a glass of water and take three slow deep breaths.","Step outside for even 5 minutes — natural light gently lifts mood.","Reach out to one person you trust today, even just to say hello.","Do one small thing that usually brings you comfort.","Be kind to yourself. You are doing the best you can.")));
+        RESPONSES.put(IntentCategory.GREAT, new BotResponse("That is wonderful to hear! Here is a quick mindfulness moment to savour this feeling:", Arrays.asList("Take one slow grateful breath and really feel it.","Notice three things that are going well right now.","Consider sharing that good energy with someone who might need it today.","Set a small joyful intention for the rest of your day.")));
+        RESPONSES.put(IntentCategory.GENERAL, new BotResponse("Thank you for sharing that with me. I am here to support you. I can offer guided mindfulness exercises, help you manage stress or sleep, or connect you with campus mental health resources. What would feel most helpful right now?", Collections.emptyList()));
+    }
+    public static final String CRISIS_RESPONSE = "I am really concerned about what you have shared, and I want you to know that you matter deeply. Please reach out to a crisis counselor right now — they are trained to help and are available 24/7. You do not have to face this alone.";
+    public BotResponse generateResponse(IntentCategory intent) { return RESPONSES.getOrDefault(intent, RESPONSES.get(IntentCategory.GENERAL)); }
+    public BotResponse getCrisisResponse() { return new BotResponse(CRISIS_RESPONSE, Collections.emptyList()); }
+}
